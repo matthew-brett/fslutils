@@ -1,0 +1,7 @@
+# Runtime requirements for developing / testing fslutils
+# Use with:
+#   pip install -r dev-requirements.txt
+#
+# Include run-time requirements
+-r requirements.txt
+pytest

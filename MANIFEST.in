@@ -1,0 +1,6 @@
+include versioneer.py
+include fslutils/_version.py
+include setup.cfg
+include README.rst
+include fslutils/_version.py
+recursive-include fslutils/tests/data *

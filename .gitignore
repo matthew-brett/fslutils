@@ -1,0 +1,8 @@
+*.pyc
+*~
+build/
+.coverage
+dist/
+fslutils.egg-info/
+MANIFEST
+.cache/
