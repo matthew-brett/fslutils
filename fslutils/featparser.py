@@ -3,10 +3,17 @@
 
 import re
 
+import numpy as np
+
 _DEF_RE = re.compile(
     r"""set \ (?P<top_name>[A-Za-z0-9_]+)
     \((?P<field>[A-Za-z0-9_]+)\)
     \ (?P<content>.*)""",
+    re.VERBOSE)
+
+_MAT_RE = re.compile(
+    r"""/(?P<field>[A-Za-z0-9_]+)
+    \s+(?P<content>.*)""",
     re.VERBOSE)
 
 
@@ -51,7 +58,7 @@ def _infer_converter(field_name):
     return str
 
 
-def _process_line(line, out_dict):
+def _process_fsf_line(line, out_dict):
     match = _DEF_RE.match(line)
     if match is None:
         return
@@ -87,5 +94,47 @@ def fsf_to_dict(fsf):
     """
     fsf_dict = {}
     for line in fsf.splitlines():
-        _process_line(line, fsf_dict)
+        _process_fsf_line(line, fsf_dict)
     return fsf_dict
+
+
+def _process_mat_line(line):
+    field_name, contents = _MAT_RE.match(line).groups()
+    converter = float if '.' in contents else int
+    contents = [converter(v) for v in contents.split()]
+    return field_name, contents if len(contents) > 1 else contents[0]
+
+
+def mat_to_dict(mat):
+    """ Parse FSF design matrix file in string `mat`, return as dict
+
+    Parameters
+    ----------
+    mat : str
+        String containing contents of .mat design matrix file.
+
+    Returns
+    -------
+    mat_dict : dict
+        Dict containing contents of mat file.
+    """
+    mat_dict = {}
+    state = 'getfields'
+    mat_lines = []
+    for line in mat.splitlines():
+        line = line.strip()
+        if line == '':
+            continue
+        if state == 'matrix':
+            assert not line.startswith('/')
+            mat_lines.append([float(v) for v in line.split()])
+            continue
+        assert state == 'getfields'
+        assert line.startswith('/')
+        if line == '/Matrix':
+            state = 'matrix'
+            continue
+        field_name, contents = _process_mat_line(line)
+        mat_dict[field_name] = contents
+    mat_dict['Matrix'] = np.array(mat_lines)
+    return mat_dict
