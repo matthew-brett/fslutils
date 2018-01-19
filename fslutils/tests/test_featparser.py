@@ -6,6 +6,7 @@ from glob import glob
 
 import numpy as np
 
+from fslutils.supporting import read_file
 from fslutils.featparser import (fsf_to_dict, mat_to_dict, _infer_converter,
                                  _DEF_RE, _to_bool)
 
@@ -39,12 +40,6 @@ def test__infer_converter():
     assert _infer_converter('version') == str
     assert _infer_converter('inmelodic') == _to_bool
     assert _infer_converter('level') == int
-
-
-def read_file(fname):
-    with open(fname, 'rt') as fobj:
-        contents = fobj.read()
-    return contents
 
 
 def test_fsf_to_dict_all():
