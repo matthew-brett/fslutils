@@ -78,13 +78,10 @@ def test_mat_to_dict_all():
         assert len(dmat['PPheights']) == dmat['NumWaves']
 
 
-def test_mat_to_dict_group():
+def test_mat_to_dict_group(bart_pumps):
     dmat = mat_to_dict(read_file(pjoin(DATA_DIR, 'one_sess_group.mat')))
-    cov =[ -9.96,  27.04,  -6.96,   9.04,   7.04,  10.04,   3.04,   7.04,
-          3.04,  12.04, -31.96,   0.04,  12.04,  16.04, -20.96,  19.04,
-          10.04, -25.96,   5.04,  11.04, -35.96, -13.96, -17.96,  12.04]
     exp_x = np.ones((24, 2))
-    exp_x[:, 1] = cov
+    exp_x[:, 1] = bart_pumps
     assert np.allclose(dmat['Matrix'], exp_x)
     assert np.allclose(dmat['PPheights'], [1, 63])
 
