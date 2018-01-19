@@ -47,13 +47,16 @@ def read_file(fname):
     return contents
 
 
-def test_fsf_to_dict():
+def test_fsf_to_dict_all():
     for design_fname in glob(pjoin(DATA_DIR, '*.fsf')):
         design = fsf_to_dict(read_file(design_fname))
         assert set(design).issubset(['fmri', 'feat_files',
                                      'highres_files',
                                      'initial_highres_files'])
         assert design['fmri']['version'] == '6.00'
+
+
+def test_fsf_to_dict_one_sess_group():
     # Specific tests.
     design = fsf_to_dict(read_file(pjoin(DATA_DIR, 'one_sess_group.fsf')))
     fmri, feat_files = design['fmri'], design['feat_files']
