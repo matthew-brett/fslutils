@@ -1,24 +1,32 @@
 """ Parser for FEAT designs
 """
 
-import re
+from re import compile as rcomp, VERBOSE
 
 import numpy as np
 
-_DEF_RE = re.compile(
+_DEF_RE = rcomp(
     r"""set \ (?P<top_name>[A-Za-z0-9_]+)
-    \((?P<field>[A-Za-z0-9_]+)\)
+    \((?P<field>[A-Za-z0-9_.]+)\)
     \ (?P<content>.*)""",
-    re.VERBOSE)
+    VERBOSE)
 
-_MAT_RE = re.compile(
+_MAT_RE = rcomp(
     r"""/(?P<field>[A-Za-z0-9_]+)
     \s+(?P<content>.*)""",
-    re.VERBOSE)
+    VERBOSE)
 
 
 def _to_bool(val):
     return bool(int(val))
+
+
+_TOP_TYPES = {
+    'fmri': dict,
+    'feat_files': list,
+    'initial_highres_files': list,
+    'highres_files': list,
+}
 
 
 _CONVERTERS = {
@@ -42,19 +50,21 @@ _CONVERTERS = {
     'multiple': int,
 }
 
-_TOP_TYPES = {
-    'fmri': dict,
-    'feat_files': list,
-    'initial_highres_files': list,
-    'highres_files': list,
-}
+_CONVERTER_REGEXPS = (
+    (rcomp(r'_yn$'), _to_bool),
+    (rcomp(r'^groupmem\.\d+'), int),
+    (rcomp(r'^con_real\d+\.\d+'), float),
+    (rcomp(r'^evg\d+\.\d+'), float),
+)
 
 
 def _infer_converter(field_name):
     if field_name in _CONVERTERS:
         return _CONVERTERS[field_name]
-    if field_name.endswith('_yn'):
-        return _to_bool
+    for regexp, converter in _CONVERTER_REGEXPS:
+        match = regexp.search(field_name)
+        if match is not None:
+            return converter
     return str
 
 

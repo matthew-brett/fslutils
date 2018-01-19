@@ -64,6 +64,12 @@ def test_fsf_to_dict():
     # Note conversion to 0-based indexing
     assert (feat_files[21] ==
             "/home/people/brettmz/replication/feat/1/balloon/sub-26_balloon.feat")
+    # Group membership
+    assert fmri['groupmem.4'] == 1
+    # Contrasts
+    assert fmri['con_real1.1'] == 1.0
+    assert fmri['con_real1.2'] == 0.0
+    assert fmri['evg18.2'] == -25.96
 
 
 def test_mat_to_dict_all():
