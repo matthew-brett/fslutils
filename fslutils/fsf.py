@@ -46,16 +46,26 @@ class FSF(object):
         keys = sorted(keys, key=_after_dot)
         return [fsfd[k] for k in sorted(keys, key=_after_dot)]
 
-    @property
-    def contrasts(self):
+    def _get_contrasts(self, suffix='real'):
         contrasts = OrderedDict()
         fsfd = self._fsf_dict['fmri']
+        # May be no contrasts of this type (given by suffix)
+        if not 'conname_{}.1'.format(suffix) in fsfd:
+            return contrasts
         # 1-based indexing in FSF file
         for con_no in range(1, self.n_contrasts + 1):
-            name = fsfd['conname_real.{}'.format(con_no)]
+            name = fsfd['conname_{}.{}'.format(suffix, con_no)]
             contrasts[name] = np.array(
-                self._dotted_vals('con_real{}'.format(con_no)))
+                self._dotted_vals('con_{}{}'.format(suffix, con_no)))
         return contrasts
+
+    @property
+    def contrasts_real(self):
+        return self._get_contrasts('real')
+
+    @property
+    def contrasts_orig(self):
+        return self._get_contrasts('orig')
 
     @property
     def evgs(self):
@@ -72,9 +82,7 @@ class FSF(object):
 
     @property
     def groupmem(self):
-        fsfd = self._fsf_dict['fmri']
-        mem_fields = [k for k in fsfd if k.startswith('groupmem.')]
-        return np.array([fsfd[k] for k in mem_fields])
+        return np.array(self._dotted_vals('groupmem'))
 
 
 load = FSF.from_file

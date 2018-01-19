@@ -70,6 +70,17 @@ def test_fsf_to_dict_one_sess_group():
     assert fmri['evg18.2'] == -25.96
 
 
+def test_fsf_to_dict_one_sess_level1():
+    # Specific tests.
+    design = fsf_to_dict(read_file(pjoin(DATA_DIR, 'one_sess_level1.fsf')))
+    fmri, _ = design['fmri'], design['feat_files']
+    assert fmri['con_real1.1'] == -1.0
+    assert fmri['con_real1.2'] == 0.0
+    assert fmri['con_real1.5'] == 1.0
+    assert fmri['con_orig1.1'] == -1.0
+    assert fmri['con_orig1.2'] == 0.0
+    assert fmri['con_orig1.3'] == 1.0
+
 def test_mat_to_dict_all():
     for fname in glob(pjoin(DATA_DIR, '*.mat')):
         dmat = mat_to_dict(read_file(fname))

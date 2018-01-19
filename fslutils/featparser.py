@@ -54,6 +54,7 @@ _CONVERTER_REGEXPS = (
     (rcomp(r'_yn$'), _to_bool),
     (rcomp(r'^groupmem\.\d+'), int),
     (rcomp(r'^con_real\d+\.\d+'), float),
+    (rcomp(r'^con_orig\d+\.\d+'), float),
     (rcomp(r'^evg\d+\.\d+'), float),
 )
 
