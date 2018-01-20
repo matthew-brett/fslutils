@@ -15,4 +15,4 @@ def test_fsf_one_sess_group(bart_pumps):
     for fsf in (fslutils.FSF(contents),
                 fslutils.fsf.load(fname),
                 fslutils.fsf.loads(contents)):
-        assert fsf.n_contrasts == 1
+        assert len(fsf.contrasts_real) == 1

@@ -25,9 +25,7 @@ def test_fsf_all():
                     load(design_fname),
                    ):
             assert fsf.attrs.version == '6.00'
-            assert fsf.n_contrasts > 0
             assert isinstance(fsf.contrasts_real, OrderedDict)
-            assert len(fsf.contrasts_real) == fsf.n_contrasts
             assert isinstance(fsf.contrasts_orig, OrderedDict)
             assert isinstance(fsf.groupmem, np.ndarray)
             assert isinstance(fsf.evgs, np.ndarray)
@@ -36,7 +34,6 @@ def test_fsf_all():
 def test_fsf_one_sess_group(bart_pumps):
     # Specific tests.
     fsf = load(pjoin(DATA_DIR, 'one_sess_group.fsf'))
-    assert fsf.n_contrasts == 1
     assert list(fsf.contrasts_orig) == []
     assert list(fsf.contrasts_real) == ['Group mean']
     assert_array_equal(fsf.contrasts_real['Group mean'], [1, 0])
@@ -49,7 +46,6 @@ def test_fsf_one_sess_group(bart_pumps):
 
 def test_fsf_level1():
     fsf = load(pjoin(DATA_DIR, 'one_sess_level1.fsf'))
-    assert fsf.n_contrasts == 1
     assert list(fsf.contrasts_real) == ['Cash-Inflate']
     assert_array_equal(fsf.contrasts_real['Cash-Inflate'],
                        [-1, 0, 0, 0, 1, 0, 0, 0])
@@ -61,11 +57,22 @@ def test_fsf_level1():
     assert fsf.attrs.tr == 2
     # Feat files are just the 4D functional
     assert len(fsf.feat_files) == 1
+    # Events
+    assert len(fsf.events) == 4
+    assert list(fsf.events) == ['Inflate', 'Beforeexplode',
+                                'Cashout', 'Explode']
+    assert fsf.events['Inflate'] == dict(
+        shape=3,
+        convolve=3,
+        convolve_phase=0,
+        tempfilt_yn=True,
+        deriv_yn=True,
+        custom="/home/data/FBI/assessment/ds000009_R2.0.3/"
+        "sub-25/func/sub-25_task-balloonanalogrisktask_label-inflate.txt")
 
 
 def test_fsf_mid(sub_nos):
     fsf = load(pjoin(DATA_DIR, 'two_sess_mid.fsf'))
-    assert fsf.n_contrasts == 24
     assert len(fsf.contrasts_orig) == 0
     assert (list(fsf.contrasts_real) ==
             ['sub-{:02d}'.format(s) for s in sub_nos])

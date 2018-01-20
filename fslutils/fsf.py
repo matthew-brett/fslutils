@@ -2,6 +2,7 @@
 """
 
 from collections import OrderedDict
+import re
 
 import numpy as np
 
@@ -9,9 +10,11 @@ from .supporting import Bunch, read_file
 from .featparser import fsf_to_dict
 
 
-def _after_dot(k):
-    # Key sorter using number after last dot in string
-    return int(k.split('.')[-1])
+END_NO = re.compile(r'(\d+)$')
+
+def _end_number(k):
+    # Key sorter using number at end of string
+    return int(END_NO.search(k).groups()[0])
 
 
 class FSF(object):
@@ -36,27 +39,22 @@ class FSF(object):
         """
         return cls.from_string(read_file(file_ish))
 
-    @property
-    def n_contrasts(self):
-        return len(self._dotted_vals('conname_real'))
-
-    def _dotted_vals(self, prefix):
+    def _numbered_vals(self, prefix):
         fsfd = self._fsf_dict['fmri']
-        keys = [k for k in fsfd if k.startswith(prefix + '.')]
-        keys = sorted(keys, key=_after_dot)
-        return [fsfd[k] for k in sorted(keys, key=_after_dot)]
+        keys = [k for k in fsfd if k.startswith(prefix)]
+        return [fsfd[k] for k in sorted(keys, key=_end_number)]
 
     def _get_contrasts(self, suffix='real'):
         contrasts = OrderedDict()
         fsfd = self._fsf_dict['fmri']
         # May be no contrasts of this type (given by suffix)
+        names = self._numbered_vals('conname_{}.'.format(suffix))
         if not 'conname_{}.1'.format(suffix) in fsfd:
             return contrasts
-        # 1-based indexing in FSF file
-        for con_no in range(1, self.n_contrasts + 1):
-            name = fsfd['conname_{}.{}'.format(suffix, con_no)]
+        for i, name in enumerate(names):
             contrasts[name] = np.array(
-                self._dotted_vals('con_{}{}'.format(suffix, con_no)))
+                # 1-based indexing in FSF file
+                self._numbered_vals('con_{}{}.'.format(suffix, i + 1)))
         return contrasts
 
     @property
@@ -73,7 +71,7 @@ class FSF(object):
         # 1-based indexing in FSF file
         evg_no = 1
         while True:
-            evg_vals = self._dotted_vals('evg{}'.format(evg_no))
+            evg_vals = self._numbered_vals('evg{}.'.format(evg_no))
             if len(evg_vals) == 0:
                 break
             evgs.append(evg_vals)
@@ -81,8 +79,30 @@ class FSF(object):
         return np.array(evgs)
 
     @property
+    def n_events(self):
+        return len(self._numbered_vals('conname_real.'))
+
+    @property
+    def events(self):
+        events = OrderedDict()
+        fsfd = self._fsf_dict['fmri']
+        names = self._numbered_vals('evtitle')
+        for i, name in enumerate(names):
+            ev_no = str(i + 1)
+            event = {}
+            for key_root in ('shape',
+                             'convolve',
+                             'convolve_phase',
+                             'tempfilt_yn',
+                             'deriv_yn',
+                             'custom'):
+                event[key_root] = fsfd.get(key_root + ev_no)
+            events[name] = event
+        return events
+
+    @property
     def groupmem(self):
-        return np.array(self._dotted_vals('groupmem'))
+        return np.array(self._numbered_vals('groupmem.'))
 
 
 load = FSF.from_file

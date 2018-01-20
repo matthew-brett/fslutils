@@ -53,11 +53,14 @@ _CONVERTERS = {
 }
 
 _CONVERTER_REGEXPS = (
-    (rcomp(r'_yn$'), _to_bool),
+    (rcomp(r'_yn(\d+)?$'), _to_bool),
     (rcomp(r'^groupmem\.\d+'), int),
     (rcomp(r'^con_real\d+\.\d+'), float),
     (rcomp(r'^con_orig\d+\.\d+'), float),
     (rcomp(r'^evg\d+\.\d+'), float),
+    (rcomp(r'^shape\d+'), int),
+    (rcomp(r'^convolve\d+'), int),
+    (rcomp(r'^convolve_phase\d+'), float),
 )
 
 
