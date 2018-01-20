@@ -8,6 +8,7 @@ import pytest
 DATA_DIR = pjoin(dirname(__file__), 'data')
 BART_PUMPS = pjoin(DATA_DIR, 'bart_pumps.txt')
 
+
 @pytest.fixture
 def bart_pumps():
     pumps = []

@@ -48,6 +48,8 @@ _CONVERTERS = {
     'totalVoxels': int,
     'regstandard_nonlinear_warpres': int,
     'multiple': int,
+    'z_thresh': float,
+    'prob_thresh': float,
 }
 
 _CONVERTER_REGEXPS = (
