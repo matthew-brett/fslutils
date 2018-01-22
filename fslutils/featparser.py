@@ -50,6 +50,7 @@ _CONVERTERS = {
     'multiple': int,
     'z_thresh': float,
     'prob_thresh': float,
+    'mixed_yn': int,  # othewise will be forced to bool below
 }
 
 _CONVERTER_REGEXPS = (
