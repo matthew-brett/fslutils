@@ -24,7 +24,7 @@ def test_fsf_all():
                     FSF.from_file(design_fname),
                     load(design_fname),
                    ):
-            assert fsf.attrs.version == '6.00'
+            assert fsf.fmri['version'] == '6.00'
             assert isinstance(fsf.contrasts_real, OrderedDict)
             assert isinstance(fsf.contrasts_orig, OrderedDict)
             assert isinstance(fsf.groupmem, np.ndarray)
@@ -54,7 +54,7 @@ def test_fsf_level1():
                        [-1, 0, 1, 0])
     assert_array_equal(fsf.groupmem, [])
     assert_array_equal(fsf.evgs, [])
-    assert fsf.attrs.tr == 2
+    assert fsf.fmri['tr'] == 2
     # Feat files are just the 4D functional
     assert len(fsf.feat_files) == 1
     # Events

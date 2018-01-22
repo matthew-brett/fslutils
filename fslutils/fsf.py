@@ -21,11 +21,16 @@ class FSF(object):
     """ Encapsulate FSF contents
     """
 
+    _known_keys = ['fmri', 'feat_files',
+                   'initial_highres_files',
+                   'highres_files']
+
     def __init__(self, contents):
         self.contents = contents
-        self._fsf_dict = fsf_to_dict(contents)
-        self.attrs = Bunch(self._fsf_dict['fmri'])
-        self.feat_files = self._fsf_dict['feat_files']
+        for key, value in fsf_to_dict(contents).items():
+            if key not in self._known_keys:
+                raise ValueError('Unknown key {}'.format(key))
+            self.__dict__[key] = value
 
     @classmethod
     def from_string(cls, in_str):
@@ -40,13 +45,13 @@ class FSF(object):
         return cls.from_string(read_file(file_ish))
 
     def _numbered_vals(self, prefix):
-        fsfd = self._fsf_dict['fmri']
+        fsfd = self.fmri
         keys = [k for k in fsfd if k.startswith(prefix)]
         return [fsfd[k] for k in sorted(keys, key=_end_number)]
 
     def _get_contrasts(self, suffix='real'):
         contrasts = OrderedDict()
-        fsfd = self._fsf_dict['fmri']
+        fsfd = self.fmri
         # May be no contrasts of this type (given by suffix)
         names = self._numbered_vals('conname_{}.'.format(suffix))
         if not 'conname_{}.1'.format(suffix) in fsfd:
@@ -85,7 +90,7 @@ class FSF(object):
     @property
     def events(self):
         events = OrderedDict()
-        fsfd = self._fsf_dict['fmri']
+        fsfd = self.fmri
         names = self._numbered_vals('evtitle')
         for i, name in enumerate(names):
             ev_no = str(i + 1)
