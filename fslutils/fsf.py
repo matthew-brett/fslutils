@@ -1,12 +1,13 @@
 """ Class and functions to encapsulate FSF information
 """
 
+from os.path import isdir, join as pjoin
 from collections import OrderedDict
 import re
 
 import numpy as np
 
-from .supporting import Bunch, read_file
+from .supporting import read_file
 from .featparser import fsf_to_dict
 
 
@@ -31,6 +32,7 @@ class FSF(object):
             if key not in self._known_keys:
                 raise ValueError('Unknown key {}'.format(key))
             self.__dict__[key] = value
+        self.filename = None
 
     @classmethod
     def from_string(cls, in_str):
@@ -41,8 +43,28 @@ class FSF(object):
     @classmethod
     def from_file(cls, file_ish):
         """ Initialize from contents of `file_ish`, return as FSF object
+
+        Set filename if available.
+
+        Parameters
+        ----------
+        file_ish : object
+            Can be string, giving filename of design file, or of the containing
+            FEAT directory, in which case we assume ``design.fsf`` as the
+            design filename.  Can also be file-like object implementing
+            ``read`` method.
         """
-        return cls.from_string(read_file(file_ish))
+        if hasattr(file_ish, 'read'):
+            filename = getattr(file_ish, 'name', None)
+            contents = file_ish.read()
+        else:
+            if isdir(file_ish):  # Could be FEAT directory
+                file_ish = pjoin(file_ish, 'design.fsf')
+            filename = file_ish
+            contents = read_file(file_ish)
+        fsf = cls.from_string(contents)
+        fsf.filename = filename
+        return fsf
 
     def _numbered_vals(self, prefix):
         fsfd = self.fmri

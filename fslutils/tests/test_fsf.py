@@ -4,6 +4,7 @@
 from os.path import join as pjoin, dirname
 from glob import glob
 from collections import OrderedDict
+from io import StringIO
 
 import numpy as np
 from numpy.testing import assert_array_equal
@@ -18,17 +19,33 @@ DATA_DIR = pjoin(dirname(__file__), 'data')
 def test_fsf_all():
     for design_fname in glob(pjoin(DATA_DIR, '*.fsf')):
         contents = read_file(design_fname)
-        for fsf in (FSF(contents),
-                    FSF.from_string(contents),
-                    loads(contents),
-                    FSF.from_file(design_fname),
-                    load(design_fname),
+
+        for fsf, exp_fname in ((FSF(contents), None),
+                               (FSF.from_string(contents), None),
+                               (loads(contents), None),
+                               (FSF.from_file(design_fname), design_fname),
+                               (load(design_fname), design_fname),
+                               (FSF.from_file(StringIO(contents)), None),
+                               (load(StringIO(contents)), None),
                    ):
             assert fsf.fmri['version'] == '6.00'
             assert isinstance(fsf.contrasts_real, OrderedDict)
             assert isinstance(fsf.contrasts_orig, OrderedDict)
             assert isinstance(fsf.groupmem, np.ndarray)
             assert isinstance(fsf.evgs, np.ndarray)
+            assert fsf.filename == exp_fname
+
+    # Loading via a file object
+    fname = pjoin(DATA_DIR, 'one_sess_level1.fsf')
+    with open(fname, 'rt') as fobj:
+        fsf = load(fobj)
+        assert fsf.fmri['version'] == '6.00'
+        assert fsf.filename == fname
+
+    # Check that we can load from FEAT directory
+    fsf = load(pjoin(DATA_DIR, 'level1.feat'))
+    assert fsf.fmri['version'] == '6.00'
+    assert fsf.filename == pjoin(DATA_DIR, 'level1.feat', 'design.fsf')
 
 
 def test_fsf_one_sess_group(bart_pumps):
