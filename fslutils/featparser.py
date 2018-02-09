@@ -44,7 +44,7 @@ _CONVERTERS = {
     'nftests_orig': int,
     'nftests_real': int,
     'ncopeinputs': int,
-    'paradigm_hp': int,
+    'paradigm_hp': float,
     'totalVoxels': int,
     'regstandard_nonlinear_warpres': int,
     'multiple': int,
