@@ -51,7 +51,8 @@ _CONVERTERS = {
     'multiple': int,
     'z_thresh': float,
     'prob_thresh': float,
-    'mixed_yn': int,  # othewise will be forced to bool below
+    'mixed_yn': int,  # otherwise will be forced to bool below
+    'motionevs': int,
 }
 
 _CONVERTER_REGEXPS = (

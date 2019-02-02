@@ -40,6 +40,17 @@ def test__infer_converter():
     assert _infer_converter('version') == str
     assert _infer_converter('inmelodic') == _to_bool
     assert _infer_converter('level') == int
+    assert _infer_converter('motionevs') == int
+
+
+def test_converter_types():
+    fname = pjoin(DATA_DIR, 'with_confevs.fsf')
+    design = fsf_to_dict(read_file(fname))
+    fmri = design['fmri']
+    assert fmri['version'] == '6.00'
+    assert fmri['inmelodic'] == False
+    assert fmri['level'] == 1
+    assert fmri['motionevs'] == 1
 
 
 def test_fsf_to_dict_all():
@@ -78,6 +89,7 @@ def test_fsf_to_dict_one_sess_level1():
     assert fmri['con_orig1.1'] == -1.0
     assert fmri['con_orig1.2'] == 0.0
     assert fmri['con_orig1.3'] == 1.0
+
 
 def test_mat_to_dict_all():
     for fname in glob(pjoin(DATA_DIR, '*.mat')):
