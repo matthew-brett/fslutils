@@ -8,7 +8,7 @@ import re
 import numpy as np
 
 from .supporting import read_file
-from .featparser import fsf_to_dict
+from .featparser import fsf_to_dict, FEAT_TOP_TYPES
 
 
 END_NO = re.compile(r'(\d+)$')
@@ -22,9 +22,7 @@ class FSF(object):
     """ Encapsulate FSF contents
     """
 
-    _known_keys = ['fmri', 'feat_files',
-                   'initial_highres_files',
-                   'highres_files']
+    _known_keys = list(FEAT_TOP_TYPES)
 
     def __init__(self, contents):
         self.contents = contents

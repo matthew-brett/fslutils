@@ -8,7 +8,7 @@ import numpy as np
 
 from fslutils.supporting import read_file
 from fslutils.featparser import (fsf_to_dict, mat_to_dict, _infer_converter,
-                                 _DEF_RE, _to_bool)
+                                 _DEF_RE, _to_bool, FEAT_TOP_TYPES)
 
 
 DATA_DIR = pjoin(dirname(__file__), 'data')
@@ -45,9 +45,7 @@ def test__infer_converter():
 def test_fsf_to_dict_all():
     for design_fname in glob(pjoin(DATA_DIR, '*.fsf')):
         design = fsf_to_dict(read_file(design_fname))
-        assert set(design).issubset(['fmri', 'feat_files',
-                                     'highres_files',
-                                     'initial_highres_files'])
+        assert set(design).issubset(FEAT_TOP_TYPES)
         assert design['fmri']['version'] == '6.00'
 
 

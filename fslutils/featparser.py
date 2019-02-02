@@ -21,11 +21,12 @@ def _to_bool(val):
     return bool(int(val))
 
 
-_TOP_TYPES = {
+FEAT_TOP_TYPES = {
     'fmri': dict,
     'feat_files': list,
     'initial_highres_files': list,
     'highres_files': list,
+    'confoundev_files': list,
 }
 
 
@@ -83,7 +84,7 @@ def _process_fsf_line(line, out_dict):
     if (contents[0], contents[-1]) == ('"', '"'):
         contents = contents[1:-1]
     if top_name not in out_dict:
-        out_dict[top_name] = _TOP_TYPES[top_name]()
+        out_dict[top_name] = FEAT_TOP_TYPES[top_name]()
     try:
         field_name = int(field_name) - 1
     except ValueError:
