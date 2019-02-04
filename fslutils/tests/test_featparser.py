@@ -41,6 +41,7 @@ def test__infer_converter():
     assert _infer_converter('inmelodic') == _to_bool
     assert _infer_converter('level') == int
     assert _infer_converter('motionevs') == int
+    assert _infer_converter('confoundevs') == int
 
 
 def test_converter_types():
@@ -51,6 +52,7 @@ def test_converter_types():
     assert fmri['inmelodic'] == False
     assert fmri['level'] == 1
     assert fmri['motionevs'] == 1
+    assert fmri['confoundevs'] == 1
 
 
 def test_fsf_to_dict_all():

@@ -53,6 +53,7 @@ _CONVERTERS = {
     'prob_thresh': float,
     'mixed_yn': int,  # otherwise will be forced to bool below
     'motionevs': int,
+    'confoundevs': int,
 }
 
 _CONVERTER_REGEXPS = (
